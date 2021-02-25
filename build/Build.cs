@@ -28,7 +28,7 @@ class Build : NukeBuild
     public static int Main () => Execute<Build>(x => x.Compile);
 
     [Parameter("Configuration to build - Default is 'Debug' (local) or 'Release' (server)")]
-    readonly Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
+    Configuration Configuration = IsLocalBuild ? Configuration.Debug : Configuration.Release;
 
     [Solution] readonly Solution Solution;
     [GitRepository] readonly GitRepository GitRepository;
@@ -71,4 +71,10 @@ class Build : NukeBuild
                 .EnableNoRestore());
         });
 
+    Target Release => _ => _
+        .Triggers(this.Compile)
+        .Executes(() =>
+        {
+            this.Configuration = Configuration.Release;
+        });
 }
